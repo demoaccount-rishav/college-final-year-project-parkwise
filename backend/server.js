@@ -15,7 +15,7 @@ import adminRouter from './routes/admin.route.js';
 dotenv.config();
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : false);
 const port = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
