@@ -15,6 +15,7 @@ import adminRouter from './routes/admin.route.js';
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
@@ -29,7 +30,10 @@ app.use(express.urlencoded({ extended: true }));
 // Rate Limiting (API-only)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000
+  max: 1000,
+  validate: { 
+    trustProxy: true
+  }
 });
 app.use('/api/', apiLimiter);
 
