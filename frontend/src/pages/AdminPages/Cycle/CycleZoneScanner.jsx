@@ -80,9 +80,9 @@ const CycleZoneScanner = () => {
 
   const onScanFailure = (error) => {
     console.warn(`QR code scan error: ${error}`);
-    if (!isManualInput) {
-      showToast('Warning', 'Scanning failed. You can switch to manual input.', 'warning');
-    }
+    // if (!isManualInput) {
+    //   showToast('Warning', 'Scanning failed. You can switch to manual input.', 'warning');
+    // }
   };
 
   const handleSubmit = async () => {
@@ -126,7 +126,7 @@ const CycleZoneScanner = () => {
   useEffect(() => {
     if (!isManualInput) {
       const newScanner = new Html5QrcodeScanner(
-        "qr-reader",
+        `qr-reader-${activeTab}`, // Unique ID for each tab's scanner
         { fps: 10, qrbox: { width: 250, height: 250 } },
         false
       );
@@ -144,7 +144,7 @@ const CycleZoneScanner = () => {
 
   return (
     <>
-    <MenuBarCycle/>
+      <MenuBarCycle />
       <Flex minH="100vh" bg={bgColor} align="center" justify="center" p={4}>
         <Card
           maxW="2xl"
@@ -181,7 +181,7 @@ const CycleZoneScanner = () => {
 
                       {!isManualInput ? (
                         <Box
-                          id="qr-reader"
+                          id={`qr-reader-${0}`} // For CycleID tab
                           w="full"
                           maxW="300px"
                           mx="auto"
@@ -237,7 +237,7 @@ const CycleZoneScanner = () => {
 
                       {!isManualInput ? (
                         <Box
-                          id="qr-reader"
+                          id={`qr-reader-${1}`} // For zoneId tab
                           w="full"
                           maxW="300px"
                           mx="auto"

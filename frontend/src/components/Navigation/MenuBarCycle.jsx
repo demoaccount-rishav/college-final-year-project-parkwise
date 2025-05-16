@@ -30,7 +30,7 @@ export default function MenuBarCycle() {
 
   const navItems = [
     { path: "/viewCycles", icon: <FiEye />, label: "View Cycles" },
-    { path: "/scanCycleZone", icon: <FiMapPin />, label: "Zone Update" },
+    { path: "/scanCycleZone", icon: <FiMapPin />, label: "Update Cycle-Zone" },
     { path: "/createCycle", icon: <FiPlusCircle />, label: "Activate Cycle" }
   ];
 
@@ -61,14 +61,14 @@ export default function MenuBarCycle() {
             size="sm"
           />
         </Flex>
-        
+
         <Divider />
 
         {/* Navigation Links */}
         {navItems.map((item) => (
-          <Tooltip 
+          <Tooltip
             key={item.path}
-            label={item.label} 
+            label={item.label}
             placement="right"
             isDisabled={!isCollapsed}
             hasArrow
@@ -99,8 +99,8 @@ export default function MenuBarCycle() {
 
         {/* Dashboard Button */}
         <Box mb={4}>
-          <Tooltip 
-            label="Go to Dashboard" 
+          <Tooltip
+            label="Go to Dashboard"
             placement="right"
             isDisabled={!isCollapsed}
             hasArrow
