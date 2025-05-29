@@ -212,10 +212,10 @@ const CardsPage = () => {
                       </Td>
                       <Td>
                         <Badge 
-                          colorScheme={card.currentBalance > 0 ? 'green' : 'red'}
+                          colorScheme={card.currentBalance > 20 ? 'green' : 'red'}
                           variant="subtle"
                         >
-                          {card.currentBalance > 0 ? 'Active' : 'Zero Balance'}
+                          {card.currentBalance > 20 ? 'Active' : 'Zero Balance'}
                         </Badge>
                       </Td>
                       <Td>
