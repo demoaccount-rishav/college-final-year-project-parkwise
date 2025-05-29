@@ -10,6 +10,7 @@ import zoneRouter from './routes/zone.route.js';
 import cycleRouter from './routes/cycle.route.js';
 import cardRouter from './routes/card.route.js';
 import adminRouter from './routes/admin.route.js';
+import rfidRouter from './routes/rfidCard.route.js';
 
 // Configurations
 dotenv.config();
@@ -31,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
-  validate: { 
+  validate: {
     trustProxy: true
   }
 });
@@ -43,6 +44,7 @@ app.use('/api/zone', zoneRouter);
 app.use('/api/cycle', cycleRouter);
 app.use('/api/card', cardRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/rfid', rfidRouter);
 
 // Serve frontend from same port
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
