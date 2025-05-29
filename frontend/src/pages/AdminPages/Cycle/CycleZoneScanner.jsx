@@ -22,8 +22,11 @@ import {
   Tabs,
   TabList,
   TabPanel,
-  TabPanels
+  TabPanels,
+  IconButton,
+  Collapse
 } from "@chakra-ui/react";
+import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import MenuBarCycle from '../../../components/Navigation/MenuBarCycle';
 
@@ -38,6 +41,7 @@ const CycleZoneScanner = () => {
   const [isManualInput, setIsManualInput] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [scanner, setScanner] = useState(null);
+  const [showMenu, setShowMenu] = useState(true);
 
   // Dark mode colors
   const bgColor = useColorModeValue('gray.50', 'gray.900');
@@ -80,9 +84,6 @@ const CycleZoneScanner = () => {
 
   const onScanFailure = (error) => {
     console.warn(`QR code scan error: ${error}`);
-    // if (!isManualInput) {
-    //   showToast('Warning', 'Scanning failed. You can switch to manual input.', 'warning');
-    // }
   };
 
   const handleSubmit = async () => {
@@ -144,7 +145,24 @@ const CycleZoneScanner = () => {
 
   return (
     <>
-      <MenuBarCycle />
+      <Box position="fixed" top={4} right={4} zIndex={999}>
+        <IconButton
+          aria-label={showMenu ? "Hide menu" : "Show menu"}
+          icon={showMenu ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          onClick={() => setShowMenu(!showMenu)}
+          colorScheme="blue"
+          size="lg"
+          borderRadius="full"
+          boxShadow="lg"
+          _hover={{ transform: "scale(1.1)" }}
+          transition="all 0.2s"
+        />
+      </Box>
+      
+      <Collapse in={showMenu} animateOpacity>
+        <MenuBarCycle />
+      </Collapse>
+      
       <Flex minH="100vh" bg={bgColor} align="center" justify="center" p={4}>
         <Card
           maxW="2xl"

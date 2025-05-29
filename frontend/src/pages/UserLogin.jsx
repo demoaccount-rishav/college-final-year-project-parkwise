@@ -156,7 +156,7 @@ import {
                     </Button>
                   </Stack>
                 </form>
-                <Text mt={6} textAlign={'center'} fontSize="sm">
+                {/* <Text mt={6} textAlign={'center'} fontSize="sm">
                   Don't have an account?{' '}
                   <Text 
                     as={RouterLink} 
@@ -167,7 +167,7 @@ import {
                   >
                     Sign up
                   </Text>
-                </Text>
+                </Text> */}
               </Box>
             </Stack>
           </Container>

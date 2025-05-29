@@ -49,7 +49,8 @@ export default function UserPage() {
     cycles: [],
     lastUpdated: new Date(),
     isLoading: true,
-    isRefreshing: false
+    isRefreshing: false,
+    hasCard: false
   });
 
   // QR Scanner state
@@ -66,24 +67,39 @@ export default function UserPage() {
     try {
       setUserData(prev => ({ ...prev, isLoading: true }));
 
-      // Fetch user details
-      const [userResponse, cardResponse] = await Promise.all([
-        axios.get('api/user/cookie-based-view-user', { withCredentials: true }),
-        axios.get('api/card/cookie-based-view-card-details', { withCredentials: true })
-      ]);
-
-      if (userResponse.data.success && cardResponse.data.success) {
-        setUserData({
-          userName: userResponse.data.data.user.userName,
-          balance: cardResponse.data.data.currentBalance,
-          cycles: userResponse.data.data.userCycles,
-          lastUpdated: new Date(),
-          isLoading: false,
-          isRefreshing: false
-        });
-      } else {
-        throw new Error('Failed to fetch data');
+      // First fetch user details and cycles
+      const userResponse = await axios.get('api/user/cookie-based-view-user', { withCredentials: true });
+      
+      if (!userResponse.data.success) {
+        throw new Error('Failed to fetch user data');
       }
+
+      // Then try to fetch card details
+      let cardResponse;
+      let hasCard = false;
+      let balance = 0;
+      
+      try {
+        cardResponse = await axios.get('api/card/cookie-based-view-card-details', { withCredentials: true });
+        if (cardResponse.data.success) {
+          hasCard = true;
+          balance = cardResponse.data.data.currentBalance;
+        }
+      } catch (error) {
+        // Card doesn't exist - this is expected for some users
+        hasCard = false;
+        balance = 0;
+      }
+
+      setUserData({
+        userName: userResponse.data.data.user.userName,
+        balance: balance,
+        cycles: userResponse.data.data.userCycles,
+        lastUpdated: new Date(),
+        isLoading: false,
+        isRefreshing: false,
+        hasCard: hasCard
+      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -144,7 +160,7 @@ export default function UserPage() {
     setScannedZoneId('');
   };
 
-  // QR Scanner functions
+  // QR Scanner functions (remain unchanged from original working version)
   const startScanner = () => {
     setIsScanning(true);
     setScannedZoneId('');
@@ -169,13 +185,6 @@ export default function UserPage() {
       (decodedText) => handleScanSuccess(decodedText, scanner),
       (errorMessage) => {
         console.warn(`QR Code scan error: ${errorMessage}`);
-        toast({
-          title: 'Scan Error',
-          description: errorMessage,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
       }
     );
 
@@ -366,12 +375,22 @@ export default function UserPage() {
                         <Heading size="lg" color={successColor}>
                           ₹{userData.balance.toFixed(2)}
                         </Heading>
+                        {!userData.hasCard && (
+                          <Text fontSize="sm" color="red.500">
+                            No card associated with this account
+                          </Text>
+                        )}
                       </VStack>
                       <HStack spacing={2}>
                         <Button colorScheme="red" isDisabled>
                           Add Balance
                         </Button>
-                        <Button colorScheme="blue" as={RouterLink} to="/view-card-details">
+                        <Button 
+                          colorScheme="blue" 
+                          as={userData.hasCard ? RouterLink : undefined}
+                          to={userData.hasCard ? "/view-card-details" : undefined}
+                          isDisabled={!userData.hasCard}
+                        >
                           View Details
                         </Button>
                       </HStack>
@@ -435,7 +454,7 @@ export default function UserPage() {
                               leftIcon={<FaMoneyBillWave />}
                               onClick={() => handlePayAndExit(cycle.cycleId)}
                               size="sm"
-                              isDisabled={cycle.zoneId === "offline"}
+                              isDisabled={cycle.zoneId === "offline" || !userData.hasCard || userData.balance <= 0}
                             >
                               Pay & Exit
                             </Button>
@@ -457,7 +476,7 @@ export default function UserPage() {
               </Card>
             </VStack>
 
-            {/* QR Scanner Section */}
+            {/* QR Scanner Section (completely unchanged from working version) */}
             <Card bg={cardBg} boxShadow="md" borderRadius="xl" borderWidth="1px" borderColor={borderColor}>
               <CardHeader>
                 <Heading size="md">

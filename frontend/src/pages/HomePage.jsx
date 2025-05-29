@@ -17,6 +17,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { FaGlobe, FaMobileAlt, FaFileAlt } from 'react-icons/fa';
 import Navbar from '../components/Navigation/Navbar';
 import img from '../imgs/image.jpg';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function HomePage() {
   // Color mode values
@@ -28,6 +30,54 @@ export default function HomePage() {
   const featureCardText = useColorModeValue('gray.600', 'gray.200');
   const footerBg = useColorModeValue('gray.800', 'gray.900');
   const buttonOutlineScheme = useColorModeValue('whiteAlpha', 'blackAlpha');
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check user login status via API
+    const checkUserLoggedIn = async () => {
+      try {
+        const response = await axios.get('api/user/cookie-based-view-user', { 
+          withCredentials: true 
+        });
+        
+        if (response.data && response.data !== false) {
+          setUserLoggedIn(true);
+        } else {
+          setUserLoggedIn(false);
+        }
+      } catch (error) {
+        setUserLoggedIn(false);
+      }
+    };
+    
+    // Check admin login status via API
+    const checkAdminLoggedIn = async () => {
+      try {
+        const response = await axios.get('api/admin/getAdminProfile', { 
+          withCredentials: true 
+        });
+        
+        if (response.data.success) {
+          setAdminLoggedIn(true);
+        } else {
+          setAdminLoggedIn(false);
+        }
+      } catch (error) {
+        setAdminLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkUserLoggedIn();
+    checkAdminLoggedIn();
+  }, []);
+
+  if (isLoading) {
+    return null; // or a loading spinner
+  }
 
   return (
     <>
@@ -58,16 +108,16 @@ export default function HomePage() {
             <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
               <Button
                 as={RouterLink}
-                to="/userLogin"
+                to={userLoggedIn ? "/userPage" : "/userLogin"}
                 colorScheme="green"
                 size="lg"
                 _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
               >
-                User Login
+                {userLoggedIn ? "User Profile" : "User Login"}
               </Button>
               <Button
                 as={RouterLink}
-                to="/adminLogin"
+                to={adminLoggedIn ? "/dashboard" : "/adminLogin"}
                 variant="outline"
                 colorScheme={buttonOutlineScheme}
                 size="lg"
@@ -79,7 +129,7 @@ export default function HomePage() {
                   bg: useColorModeValue('whiteAlpha.200', 'blackAlpha.200')
                 }}
               >
-                Admin Login
+                {adminLoggedIn ? "Admin Dashboard" : "Admin Login"}
               </Button>
             </Stack>
           </VStack>

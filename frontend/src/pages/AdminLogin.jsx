@@ -153,7 +153,7 @@ export default function AdminLogin() {
                   </Button>
                 </Stack>
               </form>
-              <Text mt={6} textAlign={'center'} fontSize="sm">
+              {/* <Text mt={6} textAlign={'center'} fontSize="sm">
                 <Text 
                   as={RouterLink} 
                   to="/" 
@@ -175,7 +175,7 @@ export default function AdminLogin() {
                 >
                   Register new admin
                 </Text>
-              </Text>
+              </Text> */}
             </Box>
           </Stack>
         </Container>
